@@ -32,10 +32,8 @@ struct MemoryBlock
 		} queue ;
 		struct
 		{
-			unsigned long	btree_parent_offset ;
-			unsigned long	btree_left_child_offset ;
-			unsigned long	btree_right_child_offset ;
-		} btree ;
+			unsigned long	children_offset[ 4 ] ;
+		} quarter_trie_tree ;
 	} ds ;
 	
 	unsigned long		block_size ;
@@ -66,8 +64,8 @@ struct MemoryPage
 		} queue ;
 		struct
 		{
-			unsigned long	btree_root_offset ;
-		} btree ;
+			unsigned long	root_offset ;
+		} quarter_trie_tree ;
 	} ds ;
 } ;
 

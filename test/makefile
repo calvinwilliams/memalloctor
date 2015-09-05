@@ -11,6 +11,7 @@ c_FILE		=	\
 			test_memalloctor.c \
 			test_memlist.c \
 			test_memqueue.c \
+			test_memtree.c \
 			test_memfile.c \
 
 ###### 目标文件、安装目录配置区
@@ -18,6 +19,7 @@ include ../makeinstall
 NOINST_OBJ	=	test_memalloctor \
 			test_memlist \
 			test_memqueue \
+			test_memtree \
 			test_memfile \
 
 ###### 编译选项
@@ -54,6 +56,9 @@ test_memlist	:	test_memlist.o
 
 test_memqueue	:	test_memqueue.o
 	$(CC) -o $@ test_memqueue.o $(LFLAGS)
+
+test_memtree	:	test_memtree.o
+	$(CC) -o $@ test_memtree.o $(LFLAGS)
 
 test_memfile	:	test_memfile.o
 	$(CC) -o $@ test_memfile.o $(LFLAGS)

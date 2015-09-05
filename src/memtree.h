@@ -3,20 +3,14 @@
 
 #include "memalloctor.h"
 
-/* red-block tree */
+/* quarter-trie-tree */
+#define MEMTREE_ERROR_PARAMETER			-7
+#define MEMTREE_ERROR_NOT_ENOUGH_SPACE		-16
+#define MEMTREE_ERROR_KEY_EXIST			-21
+#define MEMTREE_ERROR_KEY_NOT_EXIST		-22
 
-void *MAAddMemoryRBTreeRoot( struct MemoryPage *p_mempage , void *block_data , unsigned long block_size );
-void *MAAddMemoryRBTreeLeftChild( struct MemoryPage *p_mempage , void *parent , void *block_data , unsigned long block_size );
-void *MAAddMemoryRBTreeRightChild( struct MemoryPage *p_mempage , void *parent , void *block_data , unsigned long block_size );
-void *MAInsertMemoryRBTreeNode( struct MemoryPage *p_mempage , void *from , void *block_data , unsigned long block_size );
-void MARemoveMemoryRBTreeNode( struct MemoryPage *p_mempage , void *p );
-
-void *MAGetMemoryRBTreeParent( struct MemoryPage *p_mempage , void *p );
-void *MAGetMemoryRBTreeLeftChild( struct MemoryPage *p_mempage , void *p );
-void *MAGetMemoryRBTreeRightChild( struct MemoryPage *p_mempage , void *p );
-
-void *MATravelMemoryRBTreePreOrder( struct MemoryPage *p_mempage , void *p );
-void *MATravelMemoryRBTreeInOrder( struct MemoryPage *p_mempage , void *p );
-void *MATravelMemoryRBTreePostOrder( struct MemoryPage *p_mempage , void *p );
+int MAAddMemoryQuarterTrieTreeLeaf( struct MemoryPage *p_mempage , char *key , void *value , unsigned long value_size );
+int MARemoveMemoryQuarterTrieTreeLeaf( struct MemoryPage *p_mempage , char *key );
+int MAQueryMemoryQuarterTrieTreeLeaf( struct MemoryPage *p_mempage , char *key , void **pp_value , unsigned long *p_value_size );
 
 #endif
