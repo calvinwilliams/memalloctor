@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #define LPTRDIFF(_addr1_,_addr2_)		((long)((char*)(_addr1_)-(char*)(_addr2_)))
 
@@ -26,15 +29,19 @@ unsigned long MAGetMemoryBlockSize( void *p );
 unsigned long MASizeOfMemoryPageHeader();
 unsigned long MASizeOfMemoryBlockHeader();
 
+struct MemoryPage *MAGetMemoryPage( void *p );
+
 /* memory block */
 
-void *MAAllocMemoryBlock( struct MemoryPage *p_mempage , unsigned long block_size );
+void *MAAllocMemoryBlock( struct MemoryPage *p_mempage , long block_size );
+void *MAAllocMemoryBlockEx( struct MemoryPage *p_mempage , long block_size , unsigned long fileindex );
 void MAFreeMemoryBlock( struct MemoryPage *p_mempage , void *p );
 
-void *MAAddMemoryBlock( struct MemoryPage *p_mempage , void *block_data , unsigned long block_size );
+void *MAAddMemoryBlock( struct MemoryPage *p_mempage , void *block_data , long block_size );
+void *MAAddMemoryBlockEx( struct MemoryPage *p_mempage , void *block_data , long block_size , unsigned long fileindex );
 void MARemoveMemoryBlock( struct MemoryPage *p_mempage , void *p );
 
-void *MATravelNextMemoryBlock( struct MemoryPage *p_mempage , void *p );
-void *MATravelPrevMemoryBlock( struct MemoryPage *p_mempage , void *p );
+void *MATravelNextMemoryBlocks( struct MemoryPage *p_mempage , void *p );
+void *MATravelPrevMemoryBlocks( struct MemoryPage *p_mempage , void *p );
 
 #endif

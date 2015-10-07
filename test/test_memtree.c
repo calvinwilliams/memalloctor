@@ -21,7 +21,7 @@ static void TravelMemoryBlockByTrieTreeLeaf( struct MemoryPage *p_mempage )
 		printf( "	ADDR(NEXT)\n" );
 		while(1)
 		{
-			p = MATravelNextMemoryBlock( p_mempage , p ) ;
+			p = MATravelNextMemoryBlocks( p_mempage , p ) ;
 			if( p == NULL )
 				break;
 			printf( "		MEMORYBLOCK - p offset[%ld] addr[0x%p] data[%ld][%s]\n" , LPTRDIFF(p,p_mempage) , p , MAGetMemoryBlockSize(p) , MAGetMemoryBlockSize(p)?(char*)p:"" );

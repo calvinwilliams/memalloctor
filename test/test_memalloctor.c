@@ -19,7 +19,7 @@ static void TravelMemoryBlock( struct MemoryPage *p_mempage )
 		printf( "	ADDR(NEXT)\n" );
 		while(1)
 		{
-			p = MATravelNextMemoryBlock( p_mempage , p ) ;
+			p = MATravelNextMemoryBlocks( p_mempage , p ) ;
 			if( p == NULL )
 				break;
 			printf( "		MEMORYBLOCK - p offset[%ld] addr[0x%p] data[%ld][%s]\n" , (unsigned long)((char*)p-(char*)p_mempage) , p , MAGetMemoryBlockSize(p) , (char*)p );

@@ -13,8 +13,7 @@ c_FILE		=	\
 			memqueue.c \
 			memtree.c \
 			memfile.c \
-
-#			memfiles.c \
+			memfiles.c \
 
 ###### 目标文件、安装目录配置区
 include ../makeinstall
@@ -26,8 +25,7 @@ HDER		=	\
 			memqueue.h \
 			memtree.h \
 			memfile.h \
-
-#			memfiles.h \
+			memfiles.h \
 
 HDERINST	=	$(_HDERINST)
 

@@ -250,7 +250,7 @@ void MARemoveMemoryListNode( struct MemoryPage *p_mempage , void *p )
 	return;
 }
 
-void *MATravelNextMemoryListNode( struct MemoryPage *p_mempage , void *p )
+void *MATravelNextMemoryListNodes( struct MemoryPage *p_mempage , void *p )
 {
 	struct MemoryBlock	*p_memblock_dll_travel = NULL ;
 	
@@ -283,7 +283,7 @@ void *MATravelNextMemoryListNode( struct MemoryPage *p_mempage , void *p )
 	}
 }
 
-void *MATravelPrevMemoryListNode( struct MemoryPage *p_mempage , void *p )
+void *MATravelPrevMemoryListNodes( struct MemoryPage *p_mempage , void *p )
 {
 	struct MemoryBlock	*p_memblock_dll_travel = NULL ;
 	

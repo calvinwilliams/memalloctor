@@ -19,7 +19,7 @@ static void TravelMemoryBlockByList( struct MemoryPage *p_mempage )
 		printf( "	ADDR(NEXT)\n" );
 		while(1)
 		{
-			p = MATravelNextMemoryBlock( p_mempage , p ) ;
+			p = MATravelNextMemoryBlocks( p_mempage , p ) ;
 			if( p == NULL )
 				break;
 			printf( "		MEMORYBLOCK - p offset[%ld] addr[0x%p] data[%ld][%s]\n" , LPTRDIFF(p,p_mempage) , p , MAGetMemoryBlockSize(p) , (char*)p );
@@ -28,7 +28,7 @@ static void TravelMemoryBlockByList( struct MemoryPage *p_mempage )
 		printf( "	LIST(NEXT)\n" );
 		while(1)
 		{
-			p = MATravelNextMemoryListNode( p_mempage , p ) ;
+			p = MATravelNextMemoryListNodes( p_mempage , p ) ;
 			if( p == NULL )
 				break;
 			printf( "		MEMORYBLOCK - p offset[%ld] addr[0x%p] data[%ld][%s]\n" , LPTRDIFF(p,p_mempage) , p , MAGetMemoryBlockSize(p) , (char*)p );
@@ -37,7 +37,7 @@ static void TravelMemoryBlockByList( struct MemoryPage *p_mempage )
 		printf( "	LIST(PREV)\n" );
 		while(1)
 		{
-			p = MATravelPrevMemoryListNode( p_mempage , p ) ;
+			p = MATravelPrevMemoryListNodes( p_mempage , p ) ;
 			if( p == NULL )
 				break;
 			printf( "		MEMORYBLOCK - p offset[%ld] addr[0x%p] data[%ld][%s]\n" , LPTRDIFF(p,p_mempage) , p , MAGetMemoryBlockSize(p) , (char*)p );

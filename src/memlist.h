@@ -10,8 +10,8 @@ void *MAInsertBeforeMemoryListNode( struct MemoryPage *p_mempage , void *block_d
 void *MAInsertAfterMemoryListNode( struct MemoryPage *p_mempage , void *block_data , unsigned long block_size , void *p );
 void MARemoveMemoryListNode( struct MemoryPage *p_mempage , void *p );
 
-void *MATravelNextMemoryListNode( struct MemoryPage *p_mempage , void *p );
-void *MATravelPrevMemoryListNode( struct MemoryPage *p_mempage , void *p );
+void *MATravelNextMemoryListNodes( struct MemoryPage *p_mempage , void *p );
+void *MATravelPrevMemoryListNodes( struct MemoryPage *p_mempage , void *p );
 
 
 #endif

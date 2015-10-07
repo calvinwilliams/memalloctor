@@ -26,10 +26,10 @@ void MACleanMemoryPage( struct MemoryPage *p_mempage )
 		return;
 	}
 	
-	p = MATravelNextMemoryBlock( p_mempage , NULL ) ;
+	p = MATravelNextMemoryBlocks( p_mempage , NULL ) ;
 	while( p )
 	{
-		p_next = MATravelNextMemoryBlock( p_mempage , p ) ;
+		p_next = MATravelNextMemoryBlocks( p_mempage , p ) ;
 		MARemoveMemoryBlock( p_mempage , p );
 		p = p_next ;
 	}
@@ -96,7 +96,17 @@ unsigned long MASizeOfMemoryBlockHeader()
 	return sizeof(struct MemoryBlock);
 }
 
-void *MAAllocMemoryBlock( struct MemoryPage *p_mempage , unsigned long block_size )
+struct MemoryPage *MAGetMemoryPage( void *p )
+{
+	return MEMBLOCK2MEMPAGE(P2MEMBLOCK(p));
+}
+
+void *MAAllocMemoryBlock( struct MemoryPage *p_mempage , long block_size )
+{
+	return MAAllocMemoryBlockEx( p_mempage , block_size , 0 );
+}
+
+void *MAAllocMemoryBlockEx( struct MemoryPage *p_mempage , long block_size , unsigned long fileindex )
 {
 	struct MemoryBlock	*p_memblock_add = NULL ;
 	
@@ -123,6 +133,7 @@ void *MAAllocMemoryBlock( struct MemoryPage *p_mempage , unsigned long block_siz
 			p_memblock_add = (struct MemoryBlock *)( (char*)p_mempage+ULSIZEOF(struct MemoryPage) );
 			
 			memcpy( p_memblock_add->magic , "MB" , 2 );
+			p_memblock_add->fileindex = fileindex ;
 			p_memblock_add->addr_this_offset = (char*)p_memblock_add - (char*)p_mempage ;
 			p_memblock_add->addr_prev_offset = 0 ;
 			p_memblock_add->addr_next_offset = 0 ;
@@ -158,6 +169,7 @@ void *MAAllocMemoryBlock( struct MemoryPage *p_mempage , unsigned long block_siz
 				p_memblock_add = (struct MemoryBlock *)( (char*)p_memblock_travel + ULSIZEOF(struct MemoryBlock) + p_memblock_travel->block_size ) ;
 				
 				memcpy( p_memblock_add->magic , "MB" , 2 );
+				p_memblock_add->fileindex = fileindex ;
 				p_memblock_add->addr_this_offset = (char*)p_memblock_add - (char*)p_mempage ;
 				p_memblock_add->addr_prev_offset = p_memblock_travel->addr_this_offset ;
 				p_memblock_add->addr_next_offset = 0 ;
@@ -182,6 +194,7 @@ void *MAAllocMemoryBlock( struct MemoryPage *p_mempage , unsigned long block_siz
 				p_memblock_add = (struct MemoryBlock *)( (char*)p_mempage + ULSIZEOF(struct MemoryPage) ) ;
 				
 				memcpy( p_memblock_add->magic , "MB" , 2 );
+				p_memblock_add->fileindex = fileindex ;
 				p_memblock_add->addr_this_offset = (char*)p_memblock_add - (char*)p_mempage ;
 				p_memblock_add->addr_prev_offset = 0 ;
 				p_memblock_add->addr_next_offset = (char*)p_memblock_travel - (char*)p_mempage ;
@@ -204,6 +217,7 @@ void *MAAllocMemoryBlock( struct MemoryPage *p_mempage , unsigned long block_siz
 				p_memblock_travel_next = (struct MemoryBlock *)( (char*)p_mempage + p_memblock_travel->addr_next_offset ) ;
 				
 				memcpy( p_memblock_add->magic , "MB" , 2 );
+				p_memblock_add->fileindex = fileindex ;
 				p_memblock_add->addr_this_offset = (char*)p_memblock_add - (char*)p_mempage ;
 				p_memblock_add->addr_prev_offset = (char*)p_memblock_travel - (char*)p_mempage ;
 				p_memblock_add->addr_next_offset = p_memblock_travel_next->addr_this_offset ;
@@ -227,7 +241,12 @@ void MAFreeMemoryBlock( struct MemoryPage *p_mempage , void *p )
 {
 	struct MemoryBlock	*p_memblock_remove = NULL ;
 	
-	if( p_mempage == NULL || CHECK_MEMPAGE_MAGIC(p_mempage) || p == NULL )
+	if( p_mempage == NULL )
+	{
+		p_mempage = MEMBLOCK2MEMPAGE(P2MEMBLOCK(p)) ;
+	}
+	
+	if( CHECK_MEMPAGE_MAGIC(p_mempage) || p == NULL )
 	{
 		errno = EINVAL ;
 		return;
@@ -316,7 +335,12 @@ void MAFreeMemoryBlock( struct MemoryPage *p_mempage , void *p )
 	return;
 }
 
-void *MAAddMemoryBlock( struct MemoryPage *p_mempage , void *block_data , unsigned long block_size )
+void *MAAddMemoryBlock( struct MemoryPage *p_mempage , void *block_data , long block_size )
+{
+	return MAAddMemoryBlockEx( p_mempage , block_data , block_size , 0 );
+}
+
+void *MAAddMemoryBlockEx( struct MemoryPage *p_mempage , void *block_data , long block_size , unsigned long fileindex )
 {
 	void			*p_add = NULL ;
 	
@@ -326,7 +350,7 @@ void *MAAddMemoryBlock( struct MemoryPage *p_mempage , void *block_data , unsign
 		return NULL;
 	}
 	
-	p_add = MAAllocMemoryBlock( p_mempage , block_size ) ;
+	p_add = MAAllocMemoryBlockEx( p_mempage , block_size , fileindex ) ;
 	if( p_add == NULL )
 	{
 		return NULL;
@@ -345,7 +369,7 @@ void MARemoveMemoryBlock( struct MemoryPage *p_mempage , void *p )
 	return;
 }
 
-void *MATravelNextMemoryBlock( struct MemoryPage *p_mempage , void *p )
+void *MATravelNextMemoryBlocks( struct MemoryPage *p_mempage , void *p )
 {
 	struct MemoryBlock	*p_memblock = NULL ;
 	
@@ -375,7 +399,7 @@ void *MATravelNextMemoryBlock( struct MemoryPage *p_mempage , void *p )
 	}
 }
 
-void *MATravelPrevMemoryBlock( struct MemoryPage *p_mempage , void *p )
+void *MATravelPrevMemoryBlocks( struct MemoryPage *p_mempage , void *p )
 {
 	struct MemoryBlock	*p_memblock = NULL ;
 	

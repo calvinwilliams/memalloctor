@@ -20,7 +20,7 @@ static void TravelMemoryBlockByQueue( struct MemoryPage *p_mempage )
 		printf( "	ADDR(NEXT)\n" );
 		while(1)
 		{
-			p = MATravelNextMemoryBlock( p_mempage , p ) ;
+			p = MATravelNextMemoryBlocks( p_mempage , p ) ;
 			if( p == NULL )
 				break;
 			printf( "		MEMORYBLOCK - p offset[%ld] addr[0x%p] data[%ld][%s]\n" , LPTRDIFF(p,p_mempage) , p , MAGetMemoryBlockSize(p) , (char*)p );
@@ -29,7 +29,7 @@ static void TravelMemoryBlockByQueue( struct MemoryPage *p_mempage )
 		printf( "	QUEUE(NEXT)\n" );
 		while(1)
 		{
-			p = MATravelMemoryQueueMessage( p_mempage , & msg_type , p ) ;
+			p = MATravelMemoryQueueMessages( p_mempage , & msg_type , p ) ;
 			if( p == NULL )
 				break;
 			printf( "		QUEUEMESSAGE - p offset[%ld] addr[0x%p] msg_type[%d]data[%ld][%s]\n" , LPTRDIFF(p,p_mempage) , p , msg_type , MAGetMemoryBlockSize(p) , (char*)p );
@@ -44,10 +44,11 @@ static int test_MAPushMemoryBlockByQueue()
 	char			buffer[ 1024 ] ;
 	int			msg_type ;
 	char			msg_data[ 1024 ] ;
+	long			msg_size ;
 	struct MemoryPage	*p_mempage = NULL ;
 	char			*p_msg_data = NULL ;
 	
-	unsigned long		ulret = 0 ;
+	long			lret = 0 ;
 	
 	p_mempage = MAFormatMemoryPage( buffer , MASizeOfMemoryPageHeader() + MASizeOfMemoryBlockHeader()+10 + MASizeOfMemoryBlockHeader()+10 + MASizeOfMemoryBlockHeader()+10 + MASizeOfMemoryBlockHeader()+10 + MASizeOfMemoryBlockHeader()+10 ) ;
 	printf( "MAInitMemoryPage ok\n" );
@@ -58,10 +59,10 @@ static int test_MAPushMemoryBlockByQueue()
 	
 	msg_type = 1 ;
 	strcpy( msg_data , "m1" );
-	ulret = MAPushMemoryQueueMessage( p_mempage , msg_type , msg_data , 10 ) ;
-	if( ulret == 0 )
+	lret = MAPushMemoryQueueMessage( p_mempage , msg_type , msg_data , 10 ) ;
+	if( lret )
 	{
-		printf( "MAPushMemoryQueueMessage [%d][%s] failed\n" , msg_type , msg_data );
+		printf( "MAPushMemoryQueueMessage [%d][%s] failed[%ld]\n" , msg_type , msg_data , lret );
 		return -1;
 	}
 	else
@@ -71,10 +72,10 @@ static int test_MAPushMemoryBlockByQueue()
 	
 	msg_type = 2 ;
 	strcpy( msg_data , "m2" );
-	ulret = MAPushMemoryQueueMessage( p_mempage , msg_type , msg_data , 10 ) ;
-	if( ulret == 0 )
+	lret = MAPushMemoryQueueMessage( p_mempage , msg_type , msg_data , 10 ) ;
+	if( lret )
 	{
-		printf( "MAPushMemoryQueueMessage [%d][%s] failed\n" , msg_type , msg_data );
+		printf( "MAPushMemoryQueueMessage [%d][%s] failed[%ld]\n" , msg_type , msg_data , lret );
 		return -1;
 	}
 	else
@@ -84,10 +85,10 @@ static int test_MAPushMemoryBlockByQueue()
 	
 	msg_type = 3 ;
 	strcpy( msg_data , "m3" );
-	ulret = MAPushMemoryQueueMessage( p_mempage , msg_type , msg_data , 10 ) ;
-	if( ulret == 0 )
+	lret = MAPushMemoryQueueMessage( p_mempage , msg_type , msg_data , 10 ) ;
+	if( lret )
 	{
-		printf( "MAPushMemoryQueueMessage [%d][%s] failed\n" , msg_type , msg_data );
+		printf( "MAPushMemoryQueueMessage [%d][%s] failed[%ld]\n" , msg_type , msg_data , lret );
 		return -1;
 	}
 	else
@@ -97,10 +98,10 @@ static int test_MAPushMemoryBlockByQueue()
 	
 	msg_type = 4 ;
 	strcpy( msg_data , "m4" );
-	ulret = MAPushMemoryQueueMessage( p_mempage , msg_type , msg_data , 10 ) ;
-	if( ulret == 0 )
+	lret = MAPushMemoryQueueMessage( p_mempage , msg_type , msg_data , 10 ) ;
+	if( lret )
 	{
-		printf( "MAPushMemoryQueueMessage [%d][%s] failed\n" , msg_type , msg_data );
+		printf( "MAPushMemoryQueueMessage [%d][%s] failed[%ld]\n" , msg_type , msg_data , lret );
 		return -1;
 	}
 	else
@@ -110,10 +111,10 @@ static int test_MAPushMemoryBlockByQueue()
 	
 	msg_type = 5 ;
 	strcpy( msg_data , "m5" );
-	ulret = MAPushMemoryQueueMessage( p_mempage , msg_type , msg_data , 10 ) ;
-	if( ulret == 0 )
+	lret = MAPushMemoryQueueMessage( p_mempage , msg_type , msg_data , 10 ) ;
+	if( lret )
 	{
-		printf( "MAPushMemoryQueueMessage [%d][%s] failed\n" , msg_type , msg_data );
+		printf( "MAPushMemoryQueueMessage [%d][%s] failed[%ld]\n" , msg_type , msg_data , lret );
 		return -1;
 	}
 	else
@@ -124,10 +125,10 @@ static int test_MAPushMemoryBlockByQueue()
 	TravelMemoryBlockByQueue( p_mempage );
 	
 	msg_type = 2 ;
-	ulret = MAPopupMemoryQueueMessage( p_mempage , & msg_type , msg_data , sizeof(msg_data) ) ;
-	if( ulret == 0 || ulret > sizeof(msg_data) )
+	lret = MAPopupMemoryQueueMessage( p_mempage , & msg_type , msg_data , sizeof(msg_data) ) ;
+	if( lret )
 	{
-		printf( "MAPopupMemoryQueueMessage [%d] failed[%ld]\n" , msg_type , ulret );
+		printf( "MAPopupMemoryQueueMessage [%d] failed[%ld]\n" , msg_type , lret );
 		return -1;
 	}
 	else
@@ -136,10 +137,10 @@ static int test_MAPushMemoryBlockByQueue()
 	}
 	
 	msg_type = 3 ;
-	ulret = MAPopupMemoryQueueMessage( p_mempage , & msg_type , msg_data , 9 ) ;
-	if( ulret == 0 || ulret > 9 )
+	lret = MAPopupMemoryQueueMessage( p_mempage , & msg_type , msg_data , 9 ) ;
+	if( lret )
 	{
-		printf( "MAPopupMemoryQueueMessage [%d] failed[%ld]\n" , msg_type , ulret );
+		printf( "MAPopupMemoryQueueMessage [%d] failed[%ld]\n" , msg_type , lret );
 	}
 	else
 	{
@@ -148,10 +149,10 @@ static int test_MAPushMemoryBlockByQueue()
 	}
 	
 	msg_type = 33 ;
-	ulret = MAPopupMemoryQueueMessage( p_mempage , & msg_type , msg_data , sizeof(msg_data) ) ;
-	if( ulret == 0 || ulret > sizeof(msg_data) )
+	lret = MAPopupMemoryQueueMessage( p_mempage , & msg_type , msg_data , sizeof(msg_data) ) ;
+	if( lret )
 	{
-		printf( "MAPopupMemoryQueueMessage [%d] failed[%ld]\n" , msg_type , ulret );
+		printf( "MAPopupMemoryQueueMessage [%d] failed[%ld]\n" , msg_type , lret );
 	}
 	else
 	{
@@ -160,10 +161,10 @@ static int test_MAPushMemoryBlockByQueue()
 	}
 	
 	msg_type = 4 ;
-	ulret = MAPopupMemoryQueueMessage( p_mempage , & msg_type , msg_data , sizeof(msg_data) ) ;
-	if( ulret == 0 || ulret > sizeof(msg_data) )
+	lret = MAPopupMemoryQueueMessage( p_mempage , & msg_type , msg_data , sizeof(msg_data) ) ;
+	if( lret )
 	{
-		printf( "MAPopupMemoryQueueMessage [%d] failed[%ld]\n" , msg_type , ulret );
+		printf( "MAPopupMemoryQueueMessage [%d] failed[%ld]\n" , msg_type , lret );
 		return -1;
 	}
 	else
@@ -175,10 +176,10 @@ static int test_MAPushMemoryBlockByQueue()
 	
 	msg_type = 2 ;
 	strcpy( msg_data , "m2" );
-	ulret = MAPushMemoryQueueMessage( p_mempage , msg_type , msg_data , 10 ) ;
-	if( ulret == 0 )
+	lret = MAPushMemoryQueueMessage( p_mempage , msg_type , msg_data , 10 ) ;
+	if( lret )
 	{
-		printf( "MAPushMemoryQueueMessage [%d][%s] failed\n" , msg_type , msg_data );
+		printf( "MAPushMemoryQueueMessage [%d][%s] failed[%ld]\n" , msg_type , msg_data , lret );
 		return -1;
 	}
 	else
@@ -188,10 +189,10 @@ static int test_MAPushMemoryBlockByQueue()
 	
 	msg_type = 4 ;
 	strcpy( msg_data , "m4" );
-	ulret = MAPushMemoryQueueMessage( p_mempage , msg_type , msg_data , 10 ) ;
-	if( ulret == 0 )
+	lret = MAPushMemoryQueueMessage( p_mempage , msg_type , msg_data , 10 ) ;
+	if( lret )
 	{
-		printf( "MAPushMemoryQueueMessage [%d][%s] failed\n" , msg_type , msg_data );
+		printf( "MAPushMemoryQueueMessage [%d][%s] failed[%ld]\n" , msg_type , msg_data , lret );
 		return -1;
 	}
 	else
@@ -202,10 +203,10 @@ static int test_MAPushMemoryBlockByQueue()
 	TravelMemoryBlockByQueue( p_mempage );
 	
 	msg_type = -2 ;
-	ulret = MAPopdmpMemoryQueueMessage( p_mempage , & msg_type , & p_msg_data ) ;
-	if( ulret == 0 || ulret > sizeof(msg_data) )
+	lret = MAPopdmpMemoryQueueMessage( p_mempage , & msg_type , & p_msg_data , NULL ) ;
+	if( lret )
 	{
-		printf( "MAPopdmpMemoryQueueMessage [%d] failed[%ld]\n" , msg_type , ulret );
+		printf( "MAPopdmpMemoryQueueMessage [%d] failed[%ld]\n" , msg_type , lret );
 		return -1;
 	}
 	else
@@ -215,10 +216,10 @@ static int test_MAPushMemoryBlockByQueue()
 	}
 	
 	msg_type = -2 ;
-	ulret = MAPopdmpMemoryQueueMessage( p_mempage , & msg_type , & p_msg_data ) ;
-	if( ulret == 0 || ulret > sizeof(msg_data) )
+	lret = MAPopdmpMemoryQueueMessage( p_mempage , & msg_type , & p_msg_data , NULL ) ;
+	if( lret )
 	{
-		printf( "MAPopdmpMemoryQueueMessage [%d] failed[%ld]\n" , msg_type , ulret );
+		printf( "MAPopdmpMemoryQueueMessage [%d] failed[%ld]\n" , msg_type , lret );
 		return -1;
 	}
 	else
@@ -230,14 +231,14 @@ static int test_MAPushMemoryBlockByQueue()
 	TravelMemoryBlockByQueue( p_mempage );
 	
 	msg_type = -2 ;
-	ulret = MAPopdmpMemoryQueueMessage( p_mempage , & msg_type , & p_msg_data ) ;
-	if( ulret == 0 || ulret > sizeof(msg_data) )
+	lret = MAPopdmpMemoryQueueMessage( p_mempage , & msg_type , & p_msg_data , & msg_size ) ;
+	if( lret )
 	{
-		printf( "MAPopdmpMemoryQueueMessage [%d] failed[%ld]\n" , msg_type , ulret );
+		printf( "MAPopdmpMemoryQueueMessage [%d] failed[%ld]\n" , msg_type , lret );
 	}
 	else
 	{
-		printf( "MAPopdmpMemoryQueueMessage [%d][%s] ok\n" , msg_type , p_msg_data );
+		printf( "MAPopdmpMemoryQueueMessage [%d][%s] ok , msg_size[%ld]\n" , msg_type , p_msg_data , msg_size );
 		free(p_msg_data);
 		return -1;
 	}
